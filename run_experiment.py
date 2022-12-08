@@ -6,32 +6,36 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Run Domain Adaptation Experiment')
 parser.add_argument('--sbatch', action='store_true', help='run parameter grid on sbatch')
-parser.set_defaults(sbatch=False)
+parser.add_argument('--no_reset', action='store_true', help='don\'t clear the results directory')
+parser.set_defaults(sbatch=False, no_reset=False)
 args = parser.parse_args()
 
-# Prepare results directory
-if os.path.isdir('results'):
-    os.system('rm -rf results')
+if not args.no_reset:
+    # Prepare results directory
+    if os.path.isdir('results'):
+        os.system('rm -rf results')
 
-os.mkdir('results')
-os.mkdir('results/outputs')
-os.mkdir('results/data')
+    os.mkdir('results')
+    os.mkdir('results/outputs')
+    os.mkdir('results/data')
+    os.mkdir('results/data/test')
 
-with open('results/metrics.csv', 'w') as f:
-    writer = csv.writer(f)
-    writer.writerow(['Setting', 'final_cA', 'final_cB', 'final_dA', 'final_dB',
-                                            'all_cA', 'all_cB', 'all_dA', 'all_dB'])
+    with open('results/metrics.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Setting', 'final_cA', 'final_cB', 'final_dA', 'final_dB',
+                                                'all_cA', 'all_cB', 'all_dA', 'all_dB'])
 
 # String of args for single use
-single_params = '--seed 1 --save_images'
+single_params = '--method disconet --jsd_lambda 0 --n_epochs 50 --save_model'
 
 # Grid of hyperparameters for sbatch
 grid = {
-    'g_lr' : [1e-4, 1e-3, 1e-2],
-    'd_lr' : [1e-4, 1e-3, 1e-2],
-    'jsd_lambda' : [0.2,1,5],
-    'g_lambda' : [0.2,1,5],
-    'rec_lambda' : [0.2,1,5],
+    'method' : ['disconet'],
+    'val_type' : ['random'],
+    'g_lr' : [1e-2],
+    'jsd_lambda' : [50],
+    'n_epochs' : [300],
+    'seed' : list(range(1,21)),
 }
 
 # Utility function

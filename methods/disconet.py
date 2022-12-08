@@ -1,4 +1,3 @@
-
 import csv
 import torch
 import torch.nn as nn
@@ -35,13 +34,11 @@ class JSD(nn.Module):
 
         return (0.5 * loss)
 
-class Trainer:
+class DiscoTrainer:
 
     def __init__(self, params, setting):
 
         self.device = params['device']
-
-        print(self.device)
 
         self.train_loader = params['train_loader']
         self.val_loader = params['val_loader']
@@ -199,11 +196,12 @@ class Trainer:
 
                 if i == 0 and self.image_saver is not None:
                     A1, B1 = A, B
-                    #self.image_saver(A.cpu(), B.cpu(), A_fake.cpu(), B_fake.cpu(),
-                                        #A_rec.cpu(), B_rec.cpu(), epoch, self.setting)
+                    self.image_saver(A.cpu(), B.cpu(), A_fake.cpu(), B_fake.cpu(),
+                                        A_rec.cpu(), B_rec.cpu(), epoch, self.setting)
 
-        advA, advB = self.explainability(A1, B1)
+        #advA, advB = self.explainability(A1, B1)
 
+        """
         fig = plt.figure(figsize=(4,8))
         grid = ImageGrid(fig, 111, nrows_ncols=(4,2), axes_pad=0.1)
         for j in range(2):
@@ -216,6 +214,7 @@ class Trainer:
         plt.savefig('results/data/test/epoch-' + str(epoch) + '.png')
         plt.clf()
         plt.close()
+        """
 
 
         self.all_cA.append(np.mean(np.array(class_preds['A']) == np.array(class_labels['A'])))
@@ -286,3 +285,6 @@ class Trainer:
             writer.writerow([self.setting, self.all_cA[-1], self.all_cB[-1],
                             self.all_dA[-1], self.all_dB[-1], self.all_cA,
                             self.all_cB, self.all_dA, self.all_dB])
+
+    def write_model(self):
+        torch.save(self.models['c'].state_dict(), 'models/' + self.setting + '.pt')
