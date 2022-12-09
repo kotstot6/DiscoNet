@@ -1,9 +1,7 @@
 
-# DiscoNet: Towards Mitigating Shortcut Learning with Cross-Domain Regularization
+# DiscoNet :mirror_ball: Towards Mitigating Shortcut Learning with Cross-Domain Regularization
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-
-A brief description of what this project does and who it's for
 
 
 ## Authors
@@ -104,7 +102,7 @@ In `run_experiment.py`, adjust `grid` dictionary used for hyperparameter grid se
 grid = {
     'method' : ['disconet', 'tent', 'uda'],
     'val_type' : ['random'],
-    'seed' : [1,2,3,4,5],
+    'seed' : [1,2,3,4,5]
 }
 ```
 
